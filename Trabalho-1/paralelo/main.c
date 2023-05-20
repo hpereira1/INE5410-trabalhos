@@ -27,10 +27,13 @@ int main(int argc, char **argv)
     }
 
     fscanf(f, "%d %d", &size, &steps);
+    
+    prev = allocate_board(size);
+    next = allocate_board(size);
 
     if (n_threads > size) n_threads = size;
     int comeco = 0;
-    thread_info thread_info[n_threads];
+    thread_info thread_infos[n_threads];
     int intervalo = size / n_threads;
     int remainder = size % n_threads;
     pthread_t threads[n_threads];
@@ -41,13 +44,12 @@ int main(int argc, char **argv)
             remainder++;
             fim++;
         }
-        thread_info[aux].comeco = comeco;
-        thread_info[aux].fim = fim;
+        thread_infos[aux].comeco = comeco;
+        thread_infos[aux].fim = fim;
         comeco = fim;
     }
-    
-    prev = allocate_board(size);
-    next = allocate_board(size);
+
+
 
     read_file(f, prev, size);
 
@@ -61,7 +63,12 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < steps; i++)
     {
-        pthread_create(&threads[i], NULL, play, (void *) &thread_info[i]);
+        for (int aux = 0; aux < n_threads; aux++) {
+            thread_infos[aux].board = prev;
+            thread_infos[aux].newboard = next;
+            thread_infos[aux].stats_thread;
+            pthread_create(&threads[aux], NULL, play, (void *) &thread_infos[aux]);
+        }
         stats_total.borns += stats_step.borns;
         stats_total.survivals += stats_step.survivals;
         stats_total.loneliness += stats_step.loneliness;

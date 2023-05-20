@@ -14,19 +14,22 @@
  * A 'x' printed means on, space means off.
  *
  */
-typedef struct thread_info {
+typedef struct {
     unsigned int comeco;
     unsigned int fim;
+    cell_t board;
+    cell_t newboard;
+    stats_t stats_thread;
 } thread_info;
 
 
 typedef unsigned char cell_t;
 
 typedef struct {
-    unsigned int borns;
-    unsigned int overcrowding;
-    unsigned int loneliness;
-    unsigned int survivals;
+    unsigned int borns = 0;
+    unsigned int overcrowding = 0;
+    unsigned int loneliness = 0;
+    unsigned int survivals = 0;
 } stats_t;
 
 /* Allocate a GoL board of size = size^2 */
