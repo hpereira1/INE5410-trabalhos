@@ -1,4 +1,4 @@
-CFLAGS=-pthread -D_POSIX_C_SOURCE=200809L -g -O0 -DRESULT #-DDEBUG
+CFLAGS=-pthread -D_POSIX_C_SOURCE=200809L -g -O0 #-DRESULT #-DDEBUG
 
 # Só ativa sanitizers se não estivermos no cygwin nem num vgbuild
 ifneq ($(OS),Windows_NT)
@@ -10,7 +10,7 @@ LFLAGS=
 OUTPUT=gol
 LIBS=-lm
 
-# Essas duas coisas servem pra mapear quais arquivos .c dependem de 
+# Essas duas coisas servem pra mapear quais arquivos .c dependem de   
 # quais arquivos .h. Lembre-se que se o .h muda, todo .c que inclui 
 # ele precisa ser compilado novamente. Esse makefile usa features 
 # do GCC pra que o próprio GCC dê essa informação (seria chato 
@@ -25,7 +25,7 @@ SOURCES=$(wildcard *.c)
 OBJS:=$(patsubst %.c,build/%.o,$(SOURCES))
 
 # all, submission e clean sempre rodam (sem checar se suas dependencias 
-# estão sujas ou não)
+# estão sujas ou não)  
 .PHONY: all submission clean
 
 # Cria pastas internas, o usuário querendo ou não
