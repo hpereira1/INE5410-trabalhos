@@ -2,6 +2,8 @@
 #include "gol.h"
 #include <pthread.h>
 #include "gol.c"
+
+
 int main(int argc, char **argv)
 {
     int size, steps;
@@ -17,7 +19,6 @@ int main(int argc, char **argv)
         return 0;
     }
     //inicializa a barrier para n_threads
-    pthread_barrier_init(&barrier, NULL, n_threads);
     
     if ((f = fopen(argv[1], "r")) == NULL)
     {
@@ -26,16 +27,23 @@ int main(int argc, char **argv)
     }
 
     fscanf(f, "%d %d", &size, &steps);
-    int qnt_cel = size*size;
-    if (n_threads > qnt_cel) n_threads = qnt_cel;
-    
+
+    if (n_threads > size) n_threads = size;
+    int comeco = 0;
+    thread_info thread_info[n_threads];
+    int intervalo = size / n_threads;
+    int remainder = size % n_threads;
     pthread_t threads[n_threads];
 
-    for (int i = 0; i < n_threads; ++i){
-        pthread_create(&threads[i], NULL, play, (void *));
-    }
-    for(int i = 0; i < n_threads; i++){
-        pthread_join(threads[i], NULL);
+    for (int aux = 0; aux < n_threads; aux++){
+        int fim = comeco + intervalo;
+        if (remainder > 0) {
+            remainder++;
+            fim++;
+        }
+        thread_info[aux].comeco = comeco;
+        thread_info[aux].fim = fim;
+        comeco = fim;
     }
     
     prev = allocate_board(size);
@@ -53,8 +61,7 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < steps; i++)
     {
-        stats_step = play(prev, next, size);
-        
+        pthread_create(&threads[i], NULL, play, (void *) &thread_info[i]);
         stats_total.borns += stats_step.borns;
         stats_total.survivals += stats_step.survivals;
         stats_total.loneliness += stats_step.loneliness;
