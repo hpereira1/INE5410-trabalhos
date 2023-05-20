@@ -12,13 +12,13 @@
  * A 'x' printed means on, space means off.
  *
  */
-
 #include <stdlib.h>
 #include <pthread.h>
-#include "gol.h"
+#include "gol.h" // claudio
 
 
 /* Statistics */
+
 
 stats_t statistics;
 cell_t **allocate_board(int size)
@@ -61,42 +61,44 @@ int adjacent_to(cell_t **board, int size, int i, int j)
     return count;
 }
 
-stats_t play(cell_t **board, cell_t **newboard, int size)
+void *play(void *arg)
 {
-    int i, j, a;
+    unsigned int i, j, a;
+    thread_info *aux = (thread_info*) arg;
 
-    stats_t stats = {0, 0, 0, 0};
+    //stats_t stats = {0, 0, 0, 0};
 
     /* for each cell, apply the rules of Life */
-    for (i = 0; i < size; i++)
+
+    for (i = aux -> comeco; i < aux -> fim; i++)
     {
-        for (j = 0; j < size; j++)
+        for (j = 0; j < aux -> tamanho; j++)                   
         {
-            a = adjacent_to(board, size, i, j);
+            a = adjacent_to(aux ->board,aux -> tamanho ,i, j);
 
             /* if cell is alive */
-            if(board[i][j]) 
+            if(aux ->board[i][j]) 
             {
                 /* death: loneliness */
                 if(a < 2) {
-                    newboard[i][j] = 0;
-                    stats.loneliness++;
+                    aux ->newboard[i][j] = 0;
+                    aux -> stats_thread.loneliness++;
                 }
                 else
                 {
                     /* survival */
                     if(a == 2 || a == 3)
                     {
-                        newboard[i][j] = board[i][j];
-                        stats.survivals++;
+                        aux -> newboard[i][j] = aux -> board[i][j];
+                        aux -> stats_thread.survivals++;
                     }
                     else
                     {
                         /* death: overcrowding */
                         if(a > 3)
                         {
-                            newboard[i][j] = 0;
-                            stats.overcrowding++;
+                            aux -> newboard[i][j] = 0;
+                            aux -> stats_thread.overcrowding++;
                         }
                     }
                 }
@@ -106,18 +108,17 @@ stats_t play(cell_t **board, cell_t **newboard, int size)
             {
                 if(a == 3) /* new born */
                 {
-                    newboard[i][j] = 1;
-                    stats.borns++;
+                    aux -> newboard[i][j] = 1;
+                    aux -> stats_thread.borns++;
                 }
                 else /* stay unchanged */
-                    newboard[i][j] = board[i][j];
+                    aux -> newboard[i][j] = aux -> board[i][j];
             }
-        }
-        
-
     }
+    }
+    //pthread_exit(NULL);
+    //return aux -> stats_thread;
     pthread_exit(NULL);
-    return stats;
 }
 
 void print_board(cell_t **board, int size)

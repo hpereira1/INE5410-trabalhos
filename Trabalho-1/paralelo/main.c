@@ -1,8 +1,9 @@
-#include <stdio.h>
-#include "gol.h"
-#include <pthread.h>
-#include "gol.c"
 
+#include <stdio.h>
+#include <pthread.h>
+#include <stdlib.h>
+#include "gol.h"
+//#include "gol.c" 
 
 int main(int argc, char **argv)
 {
@@ -12,13 +13,11 @@ int main(int argc, char **argv)
     stats_t stats_step = {0, 0, 0, 0};
     stats_t stats_total = {0, 0, 0, 0};
 
-    int n_threads = atoi(argv[2]);
-    if (argc != 2)
+    if (argc != 3)
     {
         printf("ERRO! Você deve digitar %s <nome do arquivo do tabuleiro>!\n\n", argv[0]);
         return 0;
     }
-    //inicializa a barrier para n_threads
     
     if ((f = fopen(argv[1], "r")) == NULL)
     {
@@ -31,8 +30,11 @@ int main(int argc, char **argv)
     prev = allocate_board(size);
     next = allocate_board(size);
 
+    int n_threads = atoi(argv[2]);
     if (n_threads > size) n_threads = size;
     int comeco = 0;
+
+
     thread_info thread_infos[n_threads];
     int intervalo = size / n_threads;
     int remainder = size % n_threads;
@@ -41,11 +43,13 @@ int main(int argc, char **argv)
     for (int aux = 0; aux < n_threads; aux++){
         int fim = comeco + intervalo;
         if (remainder > 0) {
-            remainder++;
+            remainder--;
             fim++;
         }
         thread_infos[aux].comeco = comeco;
         thread_infos[aux].fim = fim;
+        thread_infos[aux].intervalo = fim - comeco;
+        thread_infos[aux].tamanho = size;
         comeco = fim;
     }
 
@@ -63,17 +67,23 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < steps; i++)
     {
+        stats_step.borns = 0;
+        stats_step.loneliness = 0;
+        stats_step.overcrowding = 0;
+        stats_step.survivals = 0;
+
         for (int aux = 0; aux < n_threads; aux++) {
             thread_infos[aux].board = prev;
             thread_infos[aux].newboard = next;
-            thread_infos[aux].stats_thread;
+            thread_infos[aux].stats_thread = stats_step;
             pthread_create(&threads[aux], NULL, play, (void *) &thread_infos[aux]);
         }
-        stats_total.borns += stats_step.borns;
-        stats_total.survivals += stats_step.survivals;
-        stats_total.loneliness += stats_step.loneliness;
-        stats_total.overcrowding += stats_step.overcrowding;
-
+        for (int aux = 0; aux < n_threads; aux ++) {
+            stats_total.borns += thread_infos[aux].stats_thread.borns;
+            stats_total.survivals += thread_infos[aux].stats_thread.survivals;
+            stats_total.loneliness += thread_infos[aux].stats_thread.loneliness;
+            stats_total.overcrowding += thread_infos[aux].stats_thread.overcrowding;
+        }
 #ifdef DEBUG
         printf("Step %d ----------\n", i + 1);
         print_board(next, size);

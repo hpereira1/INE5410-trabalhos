@@ -14,23 +14,24 @@
  * A 'x' printed means on, space means off.
  *
  */
-typedef struct {
-    unsigned int comeco;
-    unsigned int fim;
-    cell_t board;
-    cell_t newboard;
-    stats_t stats_thread;
-} thread_info;
-
-
 typedef unsigned char cell_t;
 
 typedef struct {
-    unsigned int borns = 0;
-    unsigned int overcrowding = 0;
-    unsigned int loneliness = 0;
-    unsigned int survivals = 0;
-} stats_t;
+     unsigned int borns;
+     unsigned int overcrowding;
+     unsigned int loneliness;
+     unsigned int survivals;
+}stats_t;//claudio
+
+typedef struct {
+    unsigned int comeco;
+    unsigned int fim;
+    unsigned int intervalo;
+    unsigned int tamanho;
+    cell_t **board;
+    cell_t **newboard;
+    stats_t stats_thread;
+} thread_info;//claudio
 
 /* Allocate a GoL board of size = size^2 */
 cell_t ** allocate_board(int size);
@@ -42,7 +43,7 @@ void free_board(cell_t ** board, int size);
 int adjacent_to(cell_t ** board, int size, int i, int j);
 
 /* Compute the next generation (newboard) based on the current generation (board) and returns its statistics */
-stats_t play(cell_t ** board, cell_t ** newboard, int size);
+void *play(void*arg);
 
 /* Print the GoL board */
 void print_board(cell_t ** board, int size);
