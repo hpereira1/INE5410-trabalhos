@@ -12,14 +12,15 @@
  * A 'x' printed means on, space means off.
  *
  */
-
+#include <pthread.h>
 #include <stdlib.h>
 #include "gol.h"
-
+#include "main.c"
 /* Statistics */
 stats_t statistics;
+cell_t **allocate_board(int size);
+pthread_barrier_t barrier;
 
-cell_t **allocate_board(int size)
 {
     cell_t **board = (cell_t **)malloc(sizeof(cell_t *) * size);
     int i;
@@ -111,8 +112,9 @@ stats_t play(cell_t **board, cell_t **newboard, int size)
                     newboard[i][j] = board[i][j];
             }
         }
+        pthread_barrier_wait(&barrier); //espera threads
     }
-
+    pthread_exit(NULL);
     return stats;
 }
 

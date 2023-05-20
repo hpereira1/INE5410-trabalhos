@@ -14,6 +14,11 @@
  * A 'x' printed means on, space means off.
  *
  */
+typedef struct thread_info {
+    unsigned int comeco;
+    unsigned int fim;
+} thread_info;
+
 
 typedef unsigned char cell_t;
 
