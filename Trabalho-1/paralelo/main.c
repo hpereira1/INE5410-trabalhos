@@ -79,6 +79,7 @@ int main(int argc, char **argv)
             pthread_create(&threads[aux], NULL, play, (void *) &thread_infos[aux]);
         }
         for (int aux = 0; aux < n_threads; aux ++) {
+            pthread_join(threads[aux], NULL);
             stats_total.borns += thread_infos[aux].stats_thread.borns;
             stats_total.survivals += thread_infos[aux].stats_thread.survivals;
             stats_total.loneliness += thread_infos[aux].stats_thread.loneliness;

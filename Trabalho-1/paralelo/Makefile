@@ -1,4 +1,4 @@
-CFLAGS=-pthread -D_POSIX_C_SOURCE=200809L -g -O0 -DRESULT -DDEBUG
+CFLAGS=-pthread -D_POSIX_C_SOURCE=200809L -g -O0 -DRESULT #-DDEBUG
 
 # Só ativa sanitizers se não estivermos no cygwin nem num vgbuild
 ifneq ($(OS),Windows_NT)
