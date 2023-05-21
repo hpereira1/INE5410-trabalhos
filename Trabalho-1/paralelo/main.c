@@ -80,6 +80,11 @@ int main(int argc, char **argv)
         }
         for (int aux = 0; aux < n_threads; aux ++) {
             pthread_join(threads[aux], NULL);
+            stats_step.borns += thread_infos[aux].stats_thread.borns;
+            stats_step.loneliness += thread_infos[aux].stats_thread.loneliness;
+            stats_step.overcrowding += thread_infos[aux].stats_thread.overcrowding;
+            stats_step.survivals += thread_infos[aux].stats_thread.survivals;
+            
             stats_total.borns += thread_infos[aux].stats_thread.borns;
             stats_total.survivals += thread_infos[aux].stats_thread.survivals;
             stats_total.loneliness += thread_infos[aux].stats_thread.loneliness;
