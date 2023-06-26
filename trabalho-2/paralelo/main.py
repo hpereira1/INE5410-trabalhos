@@ -33,7 +33,7 @@ try:
         matriz.append(elements_int)
 except FileNotFoundError:
     print(f"File '{file_name}' not found.")
-
+    exit()
 #divide em x matrizes 
 matrizes=[]
 nova_matriz=[]
@@ -46,12 +46,16 @@ for i in matriz:
 matrizes_processos = []
 
 tabuleiros = len(matrizes)
+if ( n_process > tabuleiros):
+  n_process = tabuleiros
+  
 inicio = 0 
 fim = 0
 x = 0
 intervalo = tabuleiros // n_process
 resto = tabuleiros % n_process
 inf_proc = []
+
 for i in range(n_process):
   inicio = inicio
   fim  += intervalo
@@ -61,20 +65,18 @@ for i in range(n_process):
   inf_proc.append(fim)
   inicio = fim
 for i in inf_proc:
-  
   aux = []
   for e in range(x, i):
     aux.append(matrizes[e])
   matrizes_processos.append(aux)
-  print('\n')
-  x+=i
-#print(matrizes)
-#print(matrizes_processos, len(matrizes_processos))
-
+  x=i
+  
+# print(inf_proc)
+# print(len(matrizes_processos))
 process = []
 t0 = time.time()
 for i in range(n_process):
-    p = Process(target=validate_sudoku, args=(matrizes_processos[i],n_threads))
+    p = Process(target=validate_sudoku, args=(matrizes_processos[i],n_threads,i))
     p.start()
     process.append(p)
 
