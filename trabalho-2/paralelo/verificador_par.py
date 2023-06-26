@@ -1,18 +1,23 @@
 
 
 
-def validate_sudoku(matrizes_proc, n_threads,i):
-    for matriz_proc in matrizes_proc:
+def validate_sudoku(matrizes_proc, n_threads,i,inicio_index):
+    index_aux = list(enumerate(matrizes_proc))
+    for i, matriz_proc in index_aux:
         contador_erros=0
-        print(f"Processo {i+1}: resolvendo quebra-cabeças {matrizes_proc.index(matriz_proc)+1}") 
+        print(f"Processo {i+1}: resolvendo quebra-cabeças {inicio_index + i +1}") 
+
         col_error = ""
         row_error = ""
         block_error = ""
+        
         for col in range(9):
             column = [matriz_proc[row][col] for row in range(9)]
             if len(set(column)) != 9:
                 col_error += f" C{col + 1}"
                 contador_erros+=1
+
+        
         for row_index, row in enumerate(matriz_proc):
             if len(set(row)) != 9:
                 row_error += f" L{row_index + 1}"

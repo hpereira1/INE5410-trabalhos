@@ -70,13 +70,15 @@ for i in inf_proc:
     aux.append(matrizes[e])
   matrizes_processos.append(aux)
   x=i
-  
-# print(inf_proc)
-# print(len(matrizes_processos))
+print(inf_proc)
+inf_proc.insert(0, 0)
+print(inf_proc)
+
 process = []
 t0 = time.time()
 for i in range(n_process):
-    p = Process(target=validate_sudoku, args=(matrizes_processos[i],n_threads,i))
+    p = Process(target=validate_sudoku, args=(matrizes_processos[i],n_threads,i,inf_proc[i]))
+
     p.start()
     process.append(p)
 
@@ -84,6 +86,6 @@ for p in process:
     p.join()
 
 t1 = time.time()
-print(t1-t0)
+# print(t1-t0)
 
 
